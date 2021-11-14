@@ -47,6 +47,10 @@ class WPM_Core {
 	 * Send Modal Form to Agency
 	 */
 	public function send_form_agency() {
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'openboker-nonce' ) ) {
+			return;
+		}
+
 		if ( isset( $_POST['firstname_agency'] ) && isset( $_POST['lastname_agency'] ) ) {
 			$data = [
 				'first_name' => sanitize_text_field( $_POST['firstname_agency'] ),
@@ -127,6 +131,10 @@ class WPM_Core {
 	 * Get Properties from Ajax Search
 	 */
 	public function get_ajax_properties() {
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'openboker-nonce' ) ) {
+			return;
+		}
+
 		if ( isset( $_POST['filters'] ) ) {
 			$filters     = [];
 			$tmp_filters = (array) $_POST['filters'];
@@ -335,7 +343,7 @@ class WPM_Core {
 				$data[ $wpm_core_key ] = sanitize_text_field( $wpm_core_value );
 			}
 
-			update_option( 'wpm_core', json_encode( $data ) );
+			update_option( 'wpm_core', $data );
 		}
 	}
 
@@ -343,7 +351,7 @@ class WPM_Core {
 	 * Load Saved Settings
 	 */
 	public function load_settings() {
-		$this->settings = json_decode( get_option( 'wpm_core' ), true );
+		$this->settings = get_option( 'wpm_core', [] );
 	}
 
 	/**
@@ -414,3 +422,10 @@ class WPM_Core {
 }
 
 new WPM_Core();
+
+function openbroker_enqueue_script() {
+	$openbroker_nonce = new wp_create_nonce( 'openboker-nonce' );
+	wp_add_inline_script( 'openbroker-nonce', "window.openbroker_nonce = '{$openbroker_nonce}'" );
+}
+
+add_action( 'wp_enqueue_scripts', 'openbroker_enqueue_script' );

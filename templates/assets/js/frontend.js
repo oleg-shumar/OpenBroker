@@ -28,7 +28,8 @@ jQuery(document).ready(function($) {
     function doneTyping () {
         var data = {
             'action': 'load_cities',
-            'search': $('#search_city').val()
+            'search': $('#search_city').val(),
+            '_wpnonce': window.openbroker_nonce
         };
 
         $.ajax({
@@ -251,7 +252,8 @@ jQuery(document).ready(function($) {
                 'lastname_agency': lastname_agency,
                 'email_agency': email_agency,
                 'phone_agency': phone_agency,
-                'message_agency': message_agency
+                'message_agency': message_agency,
+                '_wpnonce': window.openbroker_nonce
             },
             type:'POST',
             dataType: 'json',
